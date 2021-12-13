@@ -1,5 +1,6 @@
 package csy.toy;
 
+import csy.toy.domain.Member;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

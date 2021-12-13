@@ -33,10 +33,21 @@ public class Order {
     private OrderStatus status; // 주문 상태 [ORDER, CANCEL]
 
     //==연관관계 메서드==//
+    // 양방향일 때 쓰면 좋습니다. 양쪽 세팅하는 걸 원자적으로 한 코드로 딱 해결
+    // 핵심적으로 컨트롤 하는 쪽에 들고 있는 게 좋다
     public void setMember(Member member) {
         this.member = member;
         member.getOrders().add(this);
     }
+    
+//    원래는 이 코든데 위 코드로 짤 수 있다
+//    public static void main(String[] args) {
+//        Member member = new Member();
+//        Order order = new Order();
+//
+//        member.getOrders().add(order);
+//        order.setMember(member);
+//    }
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
