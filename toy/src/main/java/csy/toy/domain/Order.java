@@ -59,4 +59,52 @@ public class Order {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
+
+    //==생성 메서드==//
+    // oderItem, delivery 등도 생성돼야 하고 여러 연관 관계 들어가고 복잡해짐. 이런 복잡한 생성은 별도의 생성 메서드가 있으면 좋음
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) { // * ... : 가변 인자. 0부터 여러개까지 매개변수로 올 수 있음
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+    // 실무에서는 훨씬 복잡
+    // OrderItem 도 저렇게 넘어오는 게 아니라 파라미터나 DTO가 복잡하게 넘어옴. 또는 안에서 OrderItem을 생성해서 넣을 수도 있고.
+
+    //==비즈니스 로직==//
+    /** 주문 취소 */
+    // 주문 취소 (CANCEL) 버튼 누르면 재고 다시 올려주는 거
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+        }
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    //==조회 로직==//
+    /** 전체 주문 가격 조회 */
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+        // 스트림이나 람다 활용하면 더 깔끔하게 작성할 수 있음
+
+        // 스트림으로 바꾸면 이렇게
+//        return orderItems.stream()
+//                .mapToInt(OrderItem::getTotalPrice)
+//                .sum();
+
+    }
+
 }
